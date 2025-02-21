@@ -2,7 +2,7 @@
 
 This is the code for the submitted paper "[SDMG: Smoothing Your Diffusion Models for Powerful Graph Representation Learning]".
 
-**SDMG** bridges the gap between generative and representation learning by aligning low-frequency reconstruction, enhancing performance across graph tasks. We evaluated **SDMG** on 12 public graph datasets.
+**SDMG** bridges the gap between generative and representation learning by aligning low-frequency reconstruction, enhancing performance across graph tasks. We evaluated **SDMG** on 11 public graph datasets.
 
 ## Datasets
 **These datasets will be downloaded automatically when executing the code.**
