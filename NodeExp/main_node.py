@@ -40,13 +40,13 @@ args = parser.parse_args()
 
 
 
-def pretrain(model, graph, feat, feat_mask, adj_pos, optimizer, epoch, logger, corruption_mask_feat ):
+def pretrain(model, graph, feat, feat_mask, adj_pos, optimizer, epoch, logger ):
     alpha = 2
 
     logger.info("start epoch {}.".format(epoch))
     model.train()
 
-    loss, loss_dict1, out1 = model(graph, feat, feat_mask, adj_pos, corruption_mask_feat)
+    loss, loss_dict1, out1 = model(graph, feat, feat_mask, adj_pos)
 
     optimizer.zero_grad()
     loss.backward()
@@ -100,8 +100,8 @@ def main(cfg):
     adj_pos = get_rw_landing_probs(ksteps=ksteps, edge_index=edge_index, num_nodes=num_nodes)
     adj_pos = F.layer_norm(adj_pos, (adj_pos.shape[-1],))
 
-    corruption_mask_feat = np.random.binomial(1, 1 - cfg.MODEL.mask_ratio, size=feat.shape).astype(np.float32)
-    corruption_mask_feat = torch.from_numpy(corruption_mask_feat).to(cfg.DEVICE)
+    # corruption_mask_feat = np.random.binomial(1, 1 - cfg.MODEL.mask_ratio, size=feat.shape).astype(np.float32)
+    # corruption_mask_feat = torch.from_numpy(corruption_mask_feat).to(cfg.DEVICE)
 
     acc_list = []
     for i, seed in enumerate(cfg.seeds):
@@ -137,7 +137,7 @@ def main(cfg):
             adjust_learning_rate(optimizer, epoch=epoch, alpha=cfg.SOLVER.alpha,
                                  decay=cfg.SOLVER.decay, lr=cfg.SOLVER.LR)
 
-            pretrain(model, graph, feat, feat_mask, adj_pos, optimizer, epoch, logger, corruption_mask_feat)
+            pretrain(model, graph, feat, feat_mask, adj_pos, optimizer, epoch, logger)
 
             if ((epoch + 1) % 1 == 0) & (epoch > cfg.eva_epoch):
                 model.eval()

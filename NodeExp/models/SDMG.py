@@ -89,19 +89,19 @@ class SDMG(nn.Module):
 
         self.epoch = 0
 
-    def forward(self, g, x, feat_mask, adj_pos, corruption_mask):
+    def forward(self, g, x, feat_mask, adj_pos):
         with torch.no_grad():
             x = F.layer_norm(x, (x.shape[-1], ))
 
         t = torch.randint(self.T, size=(x.shape[0], ), device=x.device)
-        x_noise = corruption_mask * x
-        x_noise, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, x_noise, adj_pos, g)
+        # x_noise = corruption_mask * x
+        x_noise, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, adj_pos, g)
 
-        loss, out = self.node_denoising(x, x_noise, time_embed, g, corruption_mask, filter_embed, position_embed)
+        loss, out = self.node_denoising(x, x_noise, time_embed, g, filter_embed, position_embed)
         loss_item = {"loss": loss.item()}
         return loss, loss_item, out
 
-    def sample_q(self, t, x, x_noise, adj_pos, g):
+    def sample_q(self, t, x, adj_pos, g):
         if not self.training:
             def udf_std(nodes):
                 return {"std": nodes.mailbox['m'].std(dim=1, unbiased=False)}
@@ -110,15 +110,15 @@ class SDMG(nn.Module):
         
             miu, std = g.ndata['std'], g.ndata['miu']
         else:
-            miu, std = x_noise.mean(dim=0), x_noise.std(dim=0)
-        noise = torch.randn_like(x_noise, device=x_noise.device)
+            miu, std = x.mean(dim=0), x.std(dim=0)
+        noise = torch.randn_like(x, device=x.device)
         noise = noise * std + miu
         noise = self.norm_x(noise)
-        noise = torch.sign(x_noise) * torch.abs(noise)
+        noise = torch.sign(x) * torch.abs(noise)
         # noise = 0
         x_t = (
-                extract(self.sqrt_alphas_bar, t, x_noise.shape) * x_noise +
-                extract(self.sqrt_one_minus_alphas_bar, t, x_noise.shape) * noise
+                extract(self.sqrt_alphas_bar, t, x.shape) * x +
+                extract(self.sqrt_one_minus_alphas_bar, t, x.shape) * noise
                 )
         time_embed = self.time_embedding(t)
         filter_embed = self.filter_layer(g, x)
@@ -127,9 +127,9 @@ class SDMG(nn.Module):
             adj_pos = position_embed
         return x_t, time_embed, g, filter_embed, position_embed
 
-    def node_denoising(self, x, x_noise, time_embed, g, corruption_mask, filter_embed, position_embed):
+    def node_denoising(self, x, x_noise, time_embed, g, filter_embed, position_embed):
         out, out_emb = self.net(g, x_t=x_noise, time_embed=time_embed, filter_embed=filter_embed, position_embed=position_embed)
-        loss = loss_fn(g, out, x, corruption_mask, self.weights, self.alpha_l)
+        loss = loss_fn(g, out, x, self.weights, self.alpha_l)
 
         L_norm = compute_normalized_laplacian(g)
         position_embed = torch.nn.functional.normalize(position_embed, p=2, dim=1)
@@ -141,12 +141,12 @@ class SDMG(nn.Module):
         t = torch.full((1, ), T, device=x.device)
         with torch.no_grad():
             x = F.layer_norm(x, (x.shape[-1], ))
-        x_t, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, x, adj_pos, g)
+        x_t, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, adj_pos, g)
         _, hidden = self.net(g, x_t=x_t, time_embed=time_embed, filter_embed=filter_embed, position_embed=position_embed)
         return hidden
 
 
-def loss_fn(graph, x, y, corruption_mask, weights, alpha=2):
+def loss_fn(graph, x, y, weights, alpha=2):
     x = F.normalize(x, p=2, dim=-1)
     y = F.normalize(y, p=2, dim=-1)
     scales = list(range(1, len(weights)))

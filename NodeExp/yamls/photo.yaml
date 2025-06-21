@@ -15,7 +15,6 @@ MODEL:
     beta_1: 0.0003185531168122948
     beta_T: 0.02895219089515978
     T: 520
-    mask_ratio: 0.7
     weights: [1, 4, 3]
     num_pos_layers: 2
     filter_num_layers: 2
@@ -34,8 +33,7 @@ SOLVER:
     LR_f: 0.0002802608864050129
     weight_decay: 0
     weight_decay_f: 0.0000043895092766227186
-    # MAX_EPOCH: 150
-    MAX_EPOCH: 500 #100 400可以到0.952
+    MAX_EPOCH: 500
     max_epoch_f: 100
 
 eva_epoch: 330 #330
