@@ -89,8 +89,8 @@ def build_args():
                         help="use residual connection")
     parser.add_argument("--in_drop", type=float, default=.2,
                         help="input feature dropout")
-    parser.add_argument("--attn_drop", type=float, default=.1,
-                        help="attention dropout")
+    # parser.add_argument("--attn_drop", type=float, default=.1,
+    #                     help="attention dropout")
     parser.add_argument("--norm", type=str, default=None)
     parser.add_argument("--lr", type=float, default=0.005,
                         help="learning rate")

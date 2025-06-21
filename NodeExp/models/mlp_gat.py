@@ -17,8 +17,8 @@ class Denoising_Unet(nn.Module):
                  num_layers,
                  nhead, # 2
                  activation,
-                 feat_drop, # 0.3
-                 attn_drop, # 0.3
+                 # feat_drop, # 0.3
+                 # attn_drop, # 0.3
                  negative_slope,
                  norm,
                  ):

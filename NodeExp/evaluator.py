@@ -76,7 +76,7 @@ def linear_probing_for_transductive_node_classiifcation(models, graph, embed_lis
     y_true = labels[test_mask]
     correct = final_pred.eq(y_true).double()
     test_acc = correct.sum().item() / len(y_true)
-    logger.info(f"--- Testf1: {test_acc:.5f}, Best Valacc: {best_val_acc:.5f} in epoch {best_val_epoch} --- ")
+    logger.info(f"--- Testacc: {test_acc:.5f}, Best Valacc: {best_val_acc:.5f} in epoch {best_val_epoch} --- ")
 
     return test_acc
 

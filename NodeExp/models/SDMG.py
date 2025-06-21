@@ -29,8 +29,8 @@ class SDMG(nn.Module):
             num_layers: int,
             nhead: int,
             activation: str,
-            feat_drop: float,
-            attn_drop: float,
+            # feat_drop: float,
+            # attn_drop: float,
             norm: Optional[str],
             alpha_l: float = 2,
             beta_schedule: str = 'linear',
@@ -72,8 +72,8 @@ class SDMG(nn.Module):
                                   num_layers=num_layers,
                                   nhead=nhead,
                                   activation=activation,
-                                  feat_drop=feat_drop,
-                                  attn_drop=attn_drop,
+                                  # feat_drop=feat_drop,
+                                  # attn_drop=attn_drop,
                                   negative_slope=0.2,
                                   norm=norm)
 

@@ -151,7 +151,7 @@ def main(cfg):
                     best_acc_epoch = epoch
                 best_acc = max(acc, best_acc)
                 logger.info(f"Epoch {epoch}: get test acc score: {acc: .3f}")
-                logger.info(f"best_f1 {best_acc:.3f} at epoch {best_acc_epoch}")
+                logger.info(f"best_acc {best_acc:.3f} at epoch {best_acc_epoch}")
                 save_checkpoint({'epoch': epoch + 1,
                                  'state_dict': model.state_dict(),
                                  'best_acc': best_acc,
