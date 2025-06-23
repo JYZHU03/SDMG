@@ -8,6 +8,7 @@ from sklearn.metrics import f1_score, accuracy_score
 
 from utils.utils import (create_optimizer, create_pooler, set_random_seed, compute_ppr)
 from multiprocessing import Pool
+from scipy.stats import mode
 
 
 def graph_classification_evaluation(model, T, pooler, dataloader, device, logger):
@@ -59,7 +60,8 @@ def inner_func(args):
         pred_list.append(out)
     preds = np.stack(pred_list, axis=0)
     preds = torch.from_numpy(preds)
-    preds = torch.mode(preds, dim=0)[0].long().numpy()
+    # preds = torch.mode(preds, dim=0)[0].long().numpy()
+    preds = mode(preds, axis=0).mode.flatten()
     acc = accuracy_score(y_test, preds)
     return acc
 
