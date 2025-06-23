@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import f1_score
 from utils.utils import create_optimizer, accuracy, set_random_seed
+from scipy.stats import mode
 
 def node_classification_evaluation(model, T, graph, feat, adj_pos, num_classes, optim_type,
                                    lr_f, weight_decay_f, max_epoch_f, device, logger=None):

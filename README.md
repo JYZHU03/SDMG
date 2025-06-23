@@ -214,14 +214,23 @@ python main_graph.py --yaml_dir ./yamls/MUTAG.yaml
       <td>93.8 ±0.2</td>
     </tr>
     <tr>
-      <td><em>Our</em></td>
-      <td>SDMG</td>
+      <td rowspan="2"><em>Our</em></td>
+      <td>SDMG (w/mask)</td>
       <td><strong>84.3 ±0.5</strong></td>
       <td><strong>73.9 ±0.4</strong></td>
       <td>80.0 ±0.5</td>
       <td><strong>72.1 ±0.3</strong></td>
       <td><strong>91.6 ±0.2</strong></td>
       <td><strong>94.7 ±0.2</strong></td>
+    </tr>
+    <tr>
+      <td>SDMG</td>
+      <td>83.6 ±0.6</td>
+      <td>73.2 ±0.5</td>
+      <td>80.0 ±0.4</td>
+      <td>70.6 ±0.2</td>
+      <td>90.4 ±0.2</td>
+      <td>94.1 ±0.2</td>
     </tr>
   </tbody>
 </table>
