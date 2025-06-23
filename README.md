@@ -368,7 +368,7 @@ python main_graph.py --yaml_dir ./yamls/MUTAG.yaml
 </table>
 
 ## Reference
-
+```bibtex
 @inproceedings{
 zhu2025sdmg,
 title={{SDMG}: Smoothing Your Diffusion Models for Powerful Graph Representation Learning},
@@ -376,3 +376,4 @@ author={Junyou Zhu and Langzhou He and Chao Gao and Dongpeng Hou and Zhen Su and
 booktitle={Forty-second International Conference on Machine Learning},
 year={2025}
 }
+```
