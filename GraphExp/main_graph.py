@@ -52,8 +52,8 @@ def pretrain(model, train_loader, optimizer, device, epoch, logger=None):
         batch_g, _ = batch
         batch_g = batch_g.to(device)
         feat = batch_g.ndata["attr"]
-        feat_mask = batch_g.ndata["attr_mask"]
-        loss, loss_dict = model(batch_g, feat, feat_mask)
+        # feat_mask = batch_g.ndata["attr_mask"]
+        loss, loss_dict = model(batch_g, feat)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -106,15 +106,8 @@ def main(cfg):
     graphs, (num_features, num_classes) = load_graph_classification_dataset(cfg.DATA.data_name,
                                                                             deg4feat=cfg.DATA.deg4feat,
                                                                             PE=False)
-    corruption_probability = 0.0
     ksteps = list(range(1, cfg.MODEL.RW_step))
     for graph, label in graphs:
-        feat = graph.ndata["attr"]
-        feat = F.layer_norm(feat, (feat.shape[-1],))
-        mask = np.random.binomial(1, 1 - corruption_probability, size=feat.shape).astype(np.float32)
-        mask = torch.from_numpy(mask)
-        feat_mask = mask * feat
-        graph.ndata["attr_mask"] = feat_mask
 
         src, dst = graph.edges()
         edge_index = torch.stack([src, dst], dim=0)
@@ -148,7 +141,7 @@ def main(cfg):
         optimizer = create_optimizer(cfg.SOLVER.optim_type, model, cfg.SOLVER.LR, cfg.SOLVER.weight_decay)
 
         start_epoch = 0
-        if args.resume: #没跑
+        if args.resume:
             if osp.isfile(cfg.pretrain_checkpoint_dir):
                 logger.info("=> loading checkpoint '{}'".format(cfg.checkpoint_dir))
                 checkpoint = torch.load(cfg.checkpoint_dir, map_location=torch.device('cpu'))

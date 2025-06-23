@@ -85,27 +85,27 @@ class SDMG(nn.Module):
         for l in range(self.num_pos_layers-1):
             self.positional_encoder.append(Posintion_learner(num_hidden, hidden_dim=num_hidden, out_dim=num_hidden, norm='layernorm', activation='prelu'))
 
-    def forward(self, g, x, feat_mask):
+    def forward(self, g, x):
         with torch.no_grad():
             x = F.layer_norm(x, (x.shape[-1], ))
 
         t = torch.randint(self.T, size=(x.shape[0], ), device=x.device)
-        x_t, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, feat_mask, g)
+        x_t, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, g)
 
         loss = self.node_denoising(x, x_t, time_embed, g, filter_embed, position_embed)
         loss_item = {"loss": loss.item()}
         return loss, loss_item
 
-    def sample_q(self, t, x, feat_mask, g):
-        miu, std = feat_mask.mean(dim=0), feat_mask.std(dim=0)
-        noise = torch.randn_like(feat_mask, device=feat_mask.device)
+    def sample_q(self, t, x, g):
+        miu, std = x.mean(dim=0), x.std(dim=0)
+        noise = torch.randn_like(x, device=x.device)
         with torch.no_grad():
             noise = F.layer_norm(noise, (noise.shape[-1], ))
         noise = noise * std + miu
-        noise = torch.sign(feat_mask) * torch.abs(noise)
+        noise = torch.sign(x) * torch.abs(noise)
         x_t = (
-                extract(self.sqrt_alphas_bar, t, feat_mask.shape) * feat_mask +
-                extract(self.sqrt_one_minus_alphas_bar, t, feat_mask.shape) * noise
+                extract(self.sqrt_alphas_bar, t, x.shape) * x +
+                extract(self.sqrt_one_minus_alphas_bar, t, x.shape) * noise
                 )
         time_embed = self.time_embedding(t)
         filter_embed = self.filter_layer(g, x)
@@ -125,7 +125,7 @@ class SDMG(nn.Module):
         t = torch.full((1, ), T, device=x.device)
         with torch.no_grad():
             x = F.layer_norm(x, (x.shape[-1], ))
-        x_t, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, x, g)
+        x_t, time_embed, g, filter_embed, position_embed = self.sample_q(t, x, g)
         _, hidden = self.net(g, x_t=x_t, time_embed=time_embed, filter_embed=filter_embed, position_embed=position_embed)
         return hidden
 

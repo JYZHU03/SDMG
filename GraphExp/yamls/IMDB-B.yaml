@@ -19,7 +19,6 @@ MODEL:
     beta_1: 0.000335
     beta_T: 0.03379
     T: 728
-    mask_ratio: 0.0
     weights: [ 0, 3, 3, 1, 1, 1] #[ 1, 1, 1, 1, 1 ]
     num_pos_layers: 2
     filter_num_layers: 2
