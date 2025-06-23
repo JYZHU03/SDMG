@@ -2,7 +2,7 @@
 
 This is the code for the ICML2025 paper "[SDMG: Smoothing Your Diffusion Models for Powerful Graph Representation Learning]".
 
-The implementation of NSGNN is built based on the previous work [DDM: Directional Diffusion Models](https://github.com/NeXAIS/DDM). We thank them for providing the codes and tools.
+The implementation of our SDMG is built based on the previous work [DDM: Directional Diffusion Models](https://github.com/NeXAIS/DDM). We thank them for providing the codes and tools.
 
 **SDMG** bridges the gap between generative and representation learning by aligning low-frequency reconstruction, enhancing performance across graph tasks. We evaluated **SDMG** on 11 public graph datasets.
 
